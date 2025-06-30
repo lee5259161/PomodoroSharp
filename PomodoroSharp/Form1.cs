@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace PomodoroSharp
 {
@@ -59,6 +60,11 @@ namespace PomodoroSharp
         public Form1()
         {
             InitializeComponent();
+            string iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "PomodoroClock.ico");
+            if (File.Exists(iconPath))
+            {
+                this.Icon = new Icon(iconPath);
+            }
             SetupModernUI();
             InitializeTimers();
             InitializeTray();
@@ -376,9 +382,10 @@ namespace PomodoroSharp
             trayMenu.Items.Add("顯示", null, (s, e) => { this.Show(); this.WindowState = FormWindowState.Normal; trayIcon.Visible = false; });
             trayMenu.Items.Add("退出", null, (s, e) => Application.Exit());
 
+            string iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "PomodoroClock.ico");
             trayIcon = new NotifyIcon
             {
-                Icon = SystemIcons.Application,
+                Icon = File.Exists(iconPath) ? new Icon(iconPath) : SystemIcons.Application,
                 ContextMenuStrip = trayMenu,
                 Text = "Pomodoro Timer",
                 Visible = false
