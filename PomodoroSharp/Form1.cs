@@ -265,6 +265,12 @@ namespace PomodoroSharp
                 BorderStyle = BorderStyle.FixedSingle
             };
 
+            // 新增ValueChanged事件處理
+            numWorkMinutes.ValueChanged += (s, e) => {
+                defaultWorkTime = (int)numWorkMinutes.Value * 60;
+                lblWorkTime.Text = FormatTime(defaultWorkTime);
+            };
+
             btnStartWork = new RoundedButton("開始工作", 20, 180, 90, 40, successColor);
             btnPauseWork = new RoundedButton("暫停", 120, 180, 90, 40, warningColor);
             btnStopWork = new RoundedButton("停止", 220, 180, 90, 40, accentColor);
@@ -317,6 +323,12 @@ namespace PomodoroSharp
                 Value = 10,
                 Font = new Font("Segoe UI", 10F),
                 BorderStyle = BorderStyle.FixedSingle
+            };
+
+            // 新增ValueChanged事件處理
+            numBreakMinutes.ValueChanged += (s, e) => {
+                defaultBreakTime = (int)numBreakMinutes.Value * 60;
+                lblBreakTime.Text = FormatTime(defaultBreakTime);
             };
 
             btnStartBreak = new RoundedButton("開始休息", 20, 180, 90, 40, primaryColor);
