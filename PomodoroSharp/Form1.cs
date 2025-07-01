@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 using System.IO;
+using System.Media;
 
 namespace PomodoroSharp
 {
@@ -15,6 +16,13 @@ namespace PomodoroSharp
         private int breakTimeRemaining;
         private int defaultWorkTime = 30 * 60; // 秒
         private int defaultBreakTime = 10 * 60; // 秒
+        private SoundPlayer startWorkSound;
+        private SoundPlayer pauseSound;
+        private SoundPlayer workEndSound;
+        private SoundPlayer resumeSound;
+        private SoundPlayer startBreakSound;
+        private SoundPlayer stopSound;
+        private SoundPlayer breakEndSound;
 
         // UI 元件
         private Panel mainPanel;
@@ -43,6 +51,8 @@ namespace PomodoroSharp
 
         private bool isWorkPaused = false;
         private bool isBreakPaused = false;
+        private CheckBox chkMute; // 新增靜音checkbox
+        private bool isMuted = false; // 新增靜音狀態追踪
 
         // 現代化顏色配置
         private Color primaryColor = Color.FromArgb(74, 126, 180);
@@ -63,15 +73,57 @@ namespace PomodoroSharp
             {
                 this.Icon = new Icon(iconPath);
             }
+            InitializeSounds();
             SetupModernUI();
             InitializeTimers();
+        }
+
+        private void InitializeSounds()
+        {
+            string startWorkSoundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Effect1.wav");
+            string pauseSoundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Effect8.wav");
+            string workEndSoundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Effect5.wav");
+            string resumeSoundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Effect9.wav");
+            string startBreakSoundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Effect3.wav");
+            string stopSoundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Effect6.wav");
+            string breakEndSoundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Effect7.wav");
+
+
+            if (File.Exists(startWorkSoundPath))
+            {
+                startWorkSound = new SoundPlayer(startWorkSoundPath);
+            }
+            if (File.Exists(pauseSoundPath))
+            {
+                pauseSound = new SoundPlayer(pauseSoundPath);
+            }
+            if (File.Exists(workEndSoundPath))
+            {
+                workEndSound = new SoundPlayer(workEndSoundPath);
+            }
+            if (File.Exists(resumeSoundPath))
+            {
+                resumeSound = new SoundPlayer(resumeSoundPath);
+            }
+            if (File.Exists(startBreakSoundPath))
+            {
+                startBreakSound = new SoundPlayer(startBreakSoundPath);
+            }
+            if (File.Exists(stopSoundPath))
+            {
+                stopSound = new SoundPlayer(stopSoundPath);
+            }
+            if (File.Exists(breakEndSoundPath))
+            {
+                breakEndSound = new SoundPlayer(breakEndSoundPath);
+            }
         }
 
         private void SetupModernUI()
         {
             // 主視窗設定
             this.Text = "Pomodoro Timer";
-            this.Size = new Size(800, 400);
+            this.Size = new Size(800, 420);
             this.FormBorderStyle = FormBorderStyle.None;
             this.BackColor = backgroundColor;
             this.StartPosition = FormStartPosition.CenterScreen;
@@ -97,6 +149,7 @@ namespace PomodoroSharp
             // 工作區域控制項
             SetupWorkControls();
             SetupBreakControls();
+            SetupMuteControl();
 
             this.Controls.Add(mainPanel);
             mainPanel.Controls.AddRange(new Control[] { workPanel, breakPanel });
@@ -274,6 +327,35 @@ namespace PomodoroSharp
             });
         }
 
+        private void SetupMuteControl()
+        {
+            chkMute = new CheckBox
+            {
+                Text = "靜音",
+                Location = new Point(252, 240),  // 移動到休息面板的右下方
+                Size = new Size(70, 30),
+                Font = new Font("Segoe UI", 10F),
+                ForeColor = textColor,
+                BackColor = Color.Transparent,
+                Cursor = Cursors.Hand
+            };
+
+            chkMute.CheckedChanged += (s, e) =>
+            {
+                isMuted = chkMute.Checked;
+            };
+
+            breakPanel.Controls.Add(chkMute);  // 改為加入到breakPanel
+        }
+
+        private void PlaySound(SoundPlayer sound)
+        {
+            if (!isMuted && sound != null)
+            {
+                sound.Play();
+            }
+        }
+
         // 自定義圓角按鈕類別
         public class RoundedButton : Button
         {
@@ -338,7 +420,6 @@ namespace PomodoroSharp
             }
         }
 
-        // 原有的計時器和其他功能保持不變
         private void InitializeTimers()
         {
             workTimer = new System.Windows.Forms.Timer { Interval = 1000 };
@@ -348,6 +429,7 @@ namespace PomodoroSharp
                 if (--workTimeRemaining <= 0)
                 {
                     workTimer.Stop();
+                    PlaySound(workEndSound);
                     ShowBreakNotification();
                     workTimeRemaining = defaultWorkTime;
                     lblWorkTime.Text = FormatTime(workTimeRemaining);
@@ -362,6 +444,7 @@ namespace PomodoroSharp
                 if (--breakTimeRemaining <= 0)
                 {
                     breakTimer.Stop();
+                    PlaySound(breakEndSound);
                     ShowWorkNotification();
                     breakTimeRemaining = defaultBreakTime;
                     lblBreakTime.Text = FormatTime(breakTimeRemaining);
@@ -403,6 +486,7 @@ namespace PomodoroSharp
             workTimer.Start();
             isWorkPaused = false;
             btnPauseWork.Text = "暫停";
+            PlaySound(startWorkSound);
         }
 
         private void PauseWork()
@@ -411,11 +495,13 @@ namespace PomodoroSharp
             {
                 workTimer.Start();
                 btnPauseWork.Text = "暫停";
+                PlaySound(resumeSound);
             }
             else
             {
                 workTimer.Stop();
                 btnPauseWork.Text = "繼續";
+                PlaySound(pauseSound);
             }
             isWorkPaused = !isWorkPaused;
         }
@@ -427,6 +513,7 @@ namespace PomodoroSharp
             btnPauseWork.Text = "暫停";
             workTimeRemaining = defaultWorkTime;
             lblWorkTime.Text = FormatTime(workTimeRemaining);
+            PlaySound(stopSound);
         }
 
         private void StartBreak()
@@ -436,6 +523,7 @@ namespace PomodoroSharp
             breakTimer.Start();
             isBreakPaused = false;
             btnPauseBreak.Text = "暫停";
+            PlaySound(startBreakSound);
         }
 
         private void PauseBreak()
@@ -444,11 +532,13 @@ namespace PomodoroSharp
             {
                 breakTimer.Start();
                 btnPauseBreak.Text = "暫停";
+                PlaySound(resumeSound);
             }
             else
             {
                 breakTimer.Stop();
                 btnPauseBreak.Text = "繼續";
+                PlaySound(pauseSound);
             }
             isBreakPaused = !isBreakPaused;
         }
@@ -460,6 +550,7 @@ namespace PomodoroSharp
             btnPauseBreak.Text = "暫停";
             breakTimeRemaining = defaultBreakTime;
             lblBreakTime.Text = FormatTime(breakTimeRemaining);
+            PlaySound(stopSound);
         }
     }
 
