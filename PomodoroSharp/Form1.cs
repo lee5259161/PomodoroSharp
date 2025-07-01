@@ -269,6 +269,12 @@ namespace PomodoroSharp
             btnPauseWork = new RoundedButton("暫停", 120, 180, 90, 40, warningColor);
             btnStopWork = new RoundedButton("停止", 220, 180, 90, 40, accentColor);
 
+            // 初始禁用暫停和停止按鈕
+            btnPauseWork.Enabled = false;
+            btnStopWork.Enabled = false;
+            btnPauseWork.BackColor = Color.Gray;
+            btnStopWork.BackColor = Color.Gray;
+
             btnStartWork.Click += (s, e) => StartWork();
             btnPauseWork.Click += (s, e) => PauseWork();
             btnStopWork.Click += (s, e) => StopWork();
@@ -316,6 +322,12 @@ namespace PomodoroSharp
             btnStartBreak = new RoundedButton("開始休息", 20, 180, 90, 40, primaryColor);
             btnPauseBreak = new RoundedButton("暫停", 120, 180, 90, 40, warningColor);
             btnStopBreak = new RoundedButton("停止", 220, 180, 90, 40, accentColor);
+
+            // 初始禁用暫停和停止按鈕
+            btnPauseBreak.Enabled = false;
+            btnStopBreak.Enabled = false;
+            btnPauseBreak.BackColor = Color.Gray;
+            btnStopBreak.BackColor = Color.Gray;
 
             btnStartBreak.Click += (s, e) => StartBreak();
             btnPauseBreak.Click += (s, e) => PauseBreak();
@@ -433,6 +445,14 @@ namespace PomodoroSharp
                     ShowBreakNotification();
                     workTimeRemaining = defaultWorkTime;
                     lblWorkTime.Text = FormatTime(workTimeRemaining);
+
+                    // 啟用開始按鈕，禁用暫停和停止按鈕
+                    btnStartWork.Enabled = true;
+                    btnStartWork.BackColor = successColor;
+                    btnPauseWork.Enabled = false;
+                    btnStopWork.Enabled = false;
+                    btnPauseWork.BackColor = Color.Gray;
+                    btnStopWork.BackColor = Color.Gray;
                 }
                 else
                 {
@@ -448,6 +468,14 @@ namespace PomodoroSharp
                     ShowWorkNotification();
                     breakTimeRemaining = defaultBreakTime;
                     lblBreakTime.Text = FormatTime(breakTimeRemaining);
+
+                    // 啟用開始按鈕，禁用暫停和停止按鈕
+                    btnStartBreak.Enabled = true;
+                    btnStartBreak.BackColor = primaryColor;
+                    btnPauseBreak.Enabled = false;
+                    btnStopBreak.Enabled = false;
+                    btnPauseBreak.BackColor = Color.Gray;
+                    btnStopBreak.BackColor = Color.Gray;
                 }
                 else
                 {
@@ -487,6 +515,14 @@ namespace PomodoroSharp
             isWorkPaused = false;
             btnPauseWork.Text = "暫停";
             PlaySound(startWorkSound);
+
+            // 禁用開始按鈕，啟用暫停和停止按鈕
+            btnStartWork.Enabled = false;
+            btnStartWork.BackColor = Color.Gray;
+            btnPauseWork.Enabled = true;
+            btnStopWork.Enabled = true;
+            btnPauseWork.BackColor = warningColor;
+            btnStopWork.BackColor = accentColor;
         }
 
         private void PauseWork()
@@ -514,6 +550,14 @@ namespace PomodoroSharp
             workTimeRemaining = defaultWorkTime;
             lblWorkTime.Text = FormatTime(workTimeRemaining);
             PlaySound(stopSound);
+
+            // 啟用開始按鈕，禁用暫停和停止按鈕
+            btnStartWork.Enabled = true;
+            btnStartWork.BackColor = successColor;
+            btnPauseWork.Enabled = false;
+            btnStopWork.Enabled = false;
+            btnPauseWork.BackColor = Color.Gray;
+            btnStopWork.BackColor = Color.Gray;
         }
 
         private void StartBreak()
@@ -524,6 +568,14 @@ namespace PomodoroSharp
             isBreakPaused = false;
             btnPauseBreak.Text = "暫停";
             PlaySound(startBreakSound);
+
+            // 禁用開始按鈕，啟用暫停和停止按鈕
+            btnStartBreak.Enabled = false;
+            btnStartBreak.BackColor = Color.Gray;
+            btnPauseBreak.Enabled = true;
+            btnStopBreak.Enabled = true;
+            btnPauseBreak.BackColor = warningColor;
+            btnStopBreak.BackColor = accentColor;
         }
 
         private void PauseBreak()
@@ -551,6 +603,14 @@ namespace PomodoroSharp
             breakTimeRemaining = defaultBreakTime;
             lblBreakTime.Text = FormatTime(breakTimeRemaining);
             PlaySound(stopSound);
+
+            // 啟用開始按鈕，禁用暫停和停止按鈕
+            btnStartBreak.Enabled = true;
+            btnStartBreak.BackColor = primaryColor;
+            btnPauseBreak.Enabled = false;
+            btnStopBreak.Enabled = false;
+            btnPauseBreak.BackColor = Color.Gray;
+            btnStopBreak.BackColor = Color.Gray;
         }
     }
 
