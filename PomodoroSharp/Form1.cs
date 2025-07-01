@@ -38,8 +38,6 @@ namespace PomodoroSharp
         private NumericUpDown numBreakMinutes;
         private Label lblBreakInput;
 
-        private NotifyIcon trayIcon;
-        private ContextMenuStrip trayMenu;
         private Button btnMinimize;
         private Button btnClose;
 
@@ -67,7 +65,6 @@ namespace PomodoroSharp
             }
             SetupModernUI();
             InitializeTimers();
-            InitializeTray();
         }
 
         private void SetupModernUI()
@@ -127,7 +124,7 @@ namespace PomodoroSharp
             btnMinimize = CreateTitleButton("－", 690, warningColor);
 
             btnClose.Click += (s, e) => this.Close();
-            btnMinimize.Click += (s, e) => { this.Hide(); trayIcon.Visible = true; };
+            btnMinimize.Click += (s, e) => this.WindowState = FormWindowState.Minimized;
 
             titlePanel.Controls.AddRange(new Control[] { titleLabel, btnClose, btnMinimize });
             titlePanel.Paint += (s, e) => DrawRoundedPanelTop(e.Graphics, titlePanel, 15);
@@ -373,27 +370,6 @@ namespace PomodoroSharp
                 {
                     lblBreakTime.Text = FormatTime(breakTimeRemaining);
                 }
-            };
-        }
-
-        private void InitializeTray()
-        {
-            trayMenu = new ContextMenuStrip();
-            trayMenu.Items.Add("顯示", null, (s, e) => { this.Show(); this.WindowState = FormWindowState.Normal; trayIcon.Visible = false; });
-            trayMenu.Items.Add("退出", null, (s, e) => Application.Exit());
-
-            string iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "PomodoroClock.ico");
-            trayIcon = new NotifyIcon
-            {
-                Icon = File.Exists(iconPath) ? new Icon(iconPath) : SystemIcons.Application,
-                ContextMenuStrip = trayMenu,
-                Text = "Pomodoro Timer",
-                Visible = false
-            };
-            trayIcon.DoubleClick += (s, e) => {
-                this.Show();
-                this.WindowState = FormWindowState.Normal;
-                trayIcon.Visible = false;
             };
         }
 
