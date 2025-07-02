@@ -80,9 +80,9 @@ namespace PomodoroSharp
 
         private void InitializeSounds()
         {
-            string startWorkSoundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Effect1.wav");
+            string startWorkSoundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Effect11.wav");
             string pauseSoundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Effect8.wav");
-            string workEndSoundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Effect5.wav");
+            string workEndSoundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Effect10.wav");
             string resumeSoundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Effect9.wav");
             string startBreakSoundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Effect3.wav");
             string stopSoundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Effect6.wav");
