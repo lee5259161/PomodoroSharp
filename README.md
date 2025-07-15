@@ -17,6 +17,10 @@ PomodoroSharp 是一個使用 C# 和 Windows Forms 開發的現代化番茄工�
 - 📢 智能提醒
   - 工作/休息時間結束時彈出提醒視窗
   - 可選擇立即開始下一階段或稍後提醒
+ 
+  ## 系統畫面
+  ![番茄鐘畫面](https://github.com/user-attachments/assets/3f72455e-14b1-4ee4-8834-b40c6c744198)
+
 
 ## 系統要求
 
